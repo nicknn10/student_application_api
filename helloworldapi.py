@@ -1,15 +1,19 @@
 import json
-from bottle import route, run, template, error, abort
+from bottle import route, run, error, request, response
 
 @route('/hello/<name>')
 def index(name):
-    abort(404, 'just testing')
-    return template('<b>Hello {{name}}</b>!', name=name)
-
+    response.status = 200
+    response.content_type = 'application/json'
+    greeting = f"Hello, {name}!"
+    return json.dumps({'message': greeting })
+    
 
 @error(404)
 def error404(code):
-    print(code)
-    return "This page does not exist"
+    response.status = 404
+    response.content_type = 'application/json'
+    
+    return json.dumps({'message': 'This endpoint does not exist'})
 
 run(host='localhost', port=8080, reloader=True)
