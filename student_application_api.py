@@ -7,8 +7,8 @@ from bottle import abort, error, request, response, route, run
 # Edit db configuration 
 db = mysql.connector.connect(
   host="localhost",
-  user="nicknn",
-  password="kodikos",
+  user="sa",
+  password="softimpact",
   database="studentappdb"
 )
 # End of db configuration
@@ -61,6 +61,7 @@ def getstudentbyid(id):
 
         row_headers=[x[0] for x in dbcursor.description] 
         result = dict(zip(row_headers,row_values[0]))
+        dbcursor.close()
        
     except ValueError as er:        
         abort(400, er.args[0])
