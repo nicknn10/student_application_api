@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "490cd39d-9948-4f98-9950-b0fa8e2112b3",
+		"name": "SOFT Impact API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11175945"
+	},
+	"item": [
+		{
+			"name": "Retrieve all students",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/student",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"student"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve student by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/student/8",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"student",
+						"8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get available quarters",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/quarter",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"quarter"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Statistics per student per quarter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/statistics/studentperquarter/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"statistics",
+						"studentperquarter",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Statistics for subject grades per quarter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/statistics/gradesperquarter/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"statistics",
+						"gradesperquarter",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Statistics general average per quarter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/statistics/generalaverageperquarter/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"statistics",
+						"generalaverageperquarter",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new student",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Michalis\",\r\n    \"dateOfBirth\": \"1984-04-09\",\r\n    \"classId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/student",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"student"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create grade for student",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"subjectId\": 1,\r\n    \"quarterYearId\": 1,\r\n    \"grade\":10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/student/16/grade",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"student",
+						"16",
+						"grade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update student grade",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/grade/290",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"grade",
+						"290"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,3 +1,4 @@
+import datetime
 import simplejson as json
 import mysql.connector
 from bottle import abort, error, request, response, route, run
@@ -69,7 +70,189 @@ def getstudentbyid(id):
     response.status = 200
     response.content_type = 'application/json'
     return json.dumps(result)
+
+
+@route('/student', method="POST")
+def createstudent():
+    data = request.body.read()
+    if not data:
+        abort(400, 'No data received')
+    entity = json.loads(data)
+
+    if not ("name" in entity.keys()):
+        abort(400, 'No name specified')
+    if not ("dateOfBirth" in entity.keys()):
+        abort(400, "No dateOfBirth value provided")
+    if not ("classId" in entity.keys()):
+        abort(400, "No classId value provided")
+
+    try:
+        datetime.datetime.strptime(entity["dateOfBirth"],"%Y-%m-%d")
+    except:
+        abort(400, "dateOfBirth value must be of format yyyy-mm-dd")
+
+    try: 
+        dbcursor = db.cursor()
+        command = f'select * from classes c where c.classId = {entity["classId"]}'    
+        dbcursor.execute(command)
+        row_values = dbcursor.fetchall()     
+        print(row_values)
+        if len(row_values) == 0:            
+            message = f'Class with id {entity["classId"]} does not exist'
+            dbcursor.close()            
+            raise ValueError(message)
+        dbcursor.close()
+    except ValueError as er:        
+        abort(400, er.args[0])
+    except: 
+        abort(500, "An unexpected error occurred")
+
+    try:
+        dbcursor = db.cursor()
+        command = f'insert into students(name, dateOfBirth, classId) values (\"{entity["name"]}\",\"{entity["dateOfBirth"]}\",{entity["classId"]})'
+        
+        dbcursor.execute(command)
+        new_id = (dbcursor.lastrowid)
+        
+        db.commit()
+        dbcursor.close()
+    except: 
+        abort(500, "An unexpected error occurred")
+
+    response.status = 201
+    response.content_type = 'application/json'
+    message = f"Student created with id: {new_id}"
     
+    return json.dumps({"message": message })
+
+
+@route('/student/<studentId:int>/grade', method="POST")
+def creategrade(studentId):
+    try: 
+        dbcursor = db.cursor()
+        command = f'select * from students s where s.studentId = {studentId}'    
+        dbcursor.execute(command)
+        row_values = dbcursor.fetchall()     
+
+        if len(row_values) == 0:            
+            message = f'Student with id {studentId} does not exist'
+            dbcursor.close()            
+            raise ValueError(message)
+        dbcursor.close()
+    except ValueError as er:        
+        abort(400, er.args[0])
+    except: 
+        abort(500, "An unexpected error occurred")
+    
+    data = request.body.read()
+    if not data:
+        abort(400, 'No data received')
+    entity = json.loads(data)
+
+    if not ("quarterYearId" in entity.keys()):
+        abort(400, 'No quarterYearId value provided')
+    if not ("grade" in entity.keys()):
+        abort(400, "No grade value provided")
+    if not ("subjectId" in entity.keys()):
+        abort(400, "No subjectId value provided")
+
+    if(entity["grade"]<0 or entity["grade"]>10):
+        abort(400, "Grade value must be between 0 and 10")
+
+    try: 
+        dbcursor = db.cursor()
+        command = f'select * from subjects s where s.subjectId = {entity["subjectId"]}'    
+        dbcursor.execute(command)
+        row_values = dbcursor.fetchall()     
+        
+        if len(row_values) == 0:            
+            message = f'Subject with id {entity["subjectId"]} does not exist'
+            dbcursor.close()            
+            raise ValueError(message)
+        dbcursor.close()
+    except ValueError as er:        
+        abort(400, er.args[0])
+    except: 
+        abort(500, "An unexpected error occurred")
+
+    try: 
+        dbcursor = db.cursor()
+        command = f'select * from quarterYears q where q.quarterYearId = {entity["quarterYearId"]}'    
+        dbcursor.execute(command)
+        row_values = dbcursor.fetchall()     
+        if len(row_values) == 0:            
+            message = f'QuarterYear with id {entity["quarterYearId"]} does not exist'
+            dbcursor.close()            
+            raise ValueError(message)
+        dbcursor.close()
+    except ValueError as er:        
+        abort(400, er.args[0])
+    except: 
+        abort(500, "An unexpected error occurred")
+    
+    
+    try:
+        dbcursor = db.cursor()        
+        command = f'insert into grades(studentId, subjectId, quarterYearId, grade) values({studentId}, {entity["subjectId"]}, {entity["quarterYearId"]}, {entity["grade"]})'        
+        dbcursor.execute(command)
+        new_id = (dbcursor.lastrowid)
+        db.commit()
+        dbcursor.close()
+    except: 
+        abort(500, "An unexpected error occurred")
+
+    response.status = 201
+    response.content_type = 'application/json'
+    message = f"Grade created with id: {new_id}"
+    
+    return json.dumps({"message": message })
+    
+
+@route('/grade/<gradeId:int>', method="PUT")
+def updategrade(gradeId):
+    try: 
+        dbcursor = db.cursor()
+        command = f'select * from grades g where g.gradeId = {gradeId}'    
+        dbcursor.execute(command)
+        row_values = dbcursor.fetchall()     
+
+        if len(row_values) == 0:            
+            message = f'Grade with id {gradeId} does not exist'
+            dbcursor.close()            
+            raise ValueError(message)
+        dbcursor.close()
+    except ValueError as er:        
+        abort(400, er.args[0])
+    except: 
+        abort(500, "An unexpected error occurred")
+
+    data = request.body.read()
+    if not data:
+        abort(400, 'No data received')
+    entity = json.loads(data)
+
+    if not ("grade" in entity.keys()):
+        abort(400, "No grade value provided")
+
+    if(entity["grade"]<0 or entity["grade"]>10):
+        abort(400, "Grade value must be between 0 and 10")
+
+    try:
+        dbcursor = db.cursor()        
+        command = f'update grades g set grade={entity["grade"]} where g.gradeId={gradeId}' 
+        print(command)       
+        dbcursor.execute(command)
+        db.commit()
+        dbcursor.close()
+    except: 
+        abort(500, "An unexpected error occurred")
+
+    response.status = 200
+    response.content_type = 'application/json'
+    message = "Grade record updated"
+    
+    return json.dumps({"message": message })
+
 
 @route('/statistics/studentperquarter/<studentId:int>', method="GET")
 def statisticsforstudentperquarter(studentId):
@@ -194,7 +377,7 @@ def error500(error):
     return json.dumps({'message': error.body})
 
 
-# datetime.datetime.strptime("11/12/98","%m/%d/%y")
+
 
 if __name__ == '__main__':
     run(host='localhost', port=8080, reloader=True)
