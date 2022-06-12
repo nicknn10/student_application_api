@@ -7,8 +7,8 @@ from bottle import abort, error, request, response, route, run
 # Edit db configuration 
 db = mysql.connector.connect(
   host="localhost",
-  user="sa",
-  password="softimpact",
+  user="nicknn",
+  password="kodikos",
   database="studentappdb"
 )
 # End of db configuration
