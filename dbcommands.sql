@@ -1,18 +1,20 @@
 CREATE TABLE Students (
     Studentid int NOT NULL AUTO_INCREMENT,
     Name varchar(50) NOT NULL,
-    DateOfBirth DATE,
-    PRIMARY KEY (StudentId)
+    DateOfBirth DATE NOT NULL,
+	ClassId INT NOT NULL,
+    PRIMARY KEY (StudentId),
+	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId)
 ); 
 
-insert into students(Name, DateOfBirth) values('John','1984-10-11');
-insert into students(Name, DateOfBirth) values('Mary','1983-12-13');
-insert into students(Name, DateOfBirth) values('Mike','1984-07-12');
-insert into students(Name, DateOfBirth) values('Nicholas','1984-05-08');
-insert into students(Name, DateOfBirth) values('Tom','1984-12-08');
-insert into students(Name, DateOfBirth) values('Peter','1983-01-03');
-insert into students(Name, DateOfBirth) values('Martina','1984-07-05');
-insert into students(Name, DateOfBirth) values('Teo','1984-01-25');
+insert into students(Name, DateOfBirth, ClassId) values('John','1984-10-11',1);
+insert into students(Name, DateOfBirth, ClassId) values('Mary','1983-12-13', 1);
+insert into students(Name, DateOfBirth, ClassId) values('Mike','1984-07-12',2);
+insert into students(Name, DateOfBirth, ClassId) values('Nicholas','1984-05-08', 2);
+insert into students(Name, DateOfBirth, ClassId) values('Tom','1984-12-08', 2);
+insert into students(Name, DateOfBirth, ClassId) values('Peter','1983-01-03', 3);
+insert into students(Name, DateOfBirth, ClassId) values('Martina','1984-07-05', 3);
+insert into students(Name, DateOfBirth, ClassId) values('Teo','1984-01-25', 3);
 
 CREATE TABLE Classes (
     ClassId int NOT NULL AUTO_INCREMENT,
@@ -88,6 +90,10 @@ CREATE TABLE Grades (
     SubjectId int not null,
     Grade int NOT null,
     PRIMARY KEY (GradeId),
+	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+	FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
+	FOREIGN KEY (QuarterYearId) REFERENCES QuarterYears(QuarterYearId),
+	FOREIGN KEY (SubjectId) REFERENCES Subjects(SubjectId),
     CONSTRAINT UC_Grade UNIQUE (StudentId, ClassId, QuarterYearId, SubjectId)
 ); 
 
